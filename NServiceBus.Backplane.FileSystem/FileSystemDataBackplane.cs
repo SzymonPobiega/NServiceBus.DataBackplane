@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NServiceBus.Backplane.FileSystem
 {
-    public class FileSystemDataBackplane : IDataBackplane
+    class FileSystemDataBackplane : IDataBackplane
     {
         private readonly string ownerId;
         private readonly string folder;

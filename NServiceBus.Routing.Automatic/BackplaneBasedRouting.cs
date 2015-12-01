@@ -36,10 +36,10 @@ namespace NServiceBus
 
                 var messageTypesHandled = GetMessageTypesHandledByThisEndpoint(handlerRegistry, conventions);
 
-                return new HandledMessageInfoPublisher(b.Build<DataBackplaneClient>(), messageTypesHandled, context.Settings);
+                return new HandledMessageInfoPublisher(b.Build<IDataBackplaneClient>(), messageTypesHandled, context.Settings);
             });
 
-            context.RegisterStartupTask(b => new HandledMessageInfoSubscriber(b.Build<DataBackplaneClient>(), context.Settings));
+            context.RegisterStartupTask(b => new HandledMessageInfoSubscriber(b.Build<IDataBackplaneClient>(), context.Settings));
         }
 
         static List<Type> GetMessageTypesHandledByThisEndpoint(MessageHandlerRegistry handlerRegistry, Conventions conventions)

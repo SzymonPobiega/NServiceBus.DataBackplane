@@ -47,10 +47,12 @@
     <Compile Include="BackplaneDefinition.cs" />
     <Compile Include="DataBackplane.cs" />
     <Compile Include="DataBackplaneClient.cs" />
+    <Compile Include="DataBackplaneConfigExtensions.cs" />
     <Compile Include="DefaultQuerySchedule.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="IDataBackplane.cs" />
     <Compile Include="IDataBackplaneClient.cs" />
+    <Compile Include="IDataBackplaneSubscription.cs" />
     <Compile Include="IQuerySchedule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

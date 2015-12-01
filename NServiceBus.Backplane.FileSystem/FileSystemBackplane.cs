@@ -7,13 +7,13 @@ namespace NServiceBus.Backplane.FileSystem
 {
     public class FileSystemBackplane : BackplaneDefinition
     {
-        public override IDataBackplane CreateBackplane(string ownerId, string connectionString)
+        public override IDataBackplane CreateBackplane(string nodeId, string connectionString)
         {
             var folder = connectionString == null 
                 ? CreateUniqueFOlderBasedOnSolutionName() 
                 : UseFolderFromConnectionString(connectionString);
 
-            return new FileSystemDataBackplane(ownerId, folder);
+            return new FileSystemDataBackplane(nodeId, folder);
         }
 
         private string UseFolderFromConnectionString(string connectionString)

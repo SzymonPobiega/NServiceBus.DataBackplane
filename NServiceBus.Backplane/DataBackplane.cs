@@ -1,20 +1,11 @@
 ﻿using System.Threading.Tasks;
-using NServiceBus.Configuration.AdvanceExtensibility;
 using NServiceBus.Features;
 
 namespace NServiceBus.Backplane
 {
-    public static class DataBackplaneConfigExtensions
-    {
-        public static void EnableDataBackplane<T>(this BusConfiguration busConfiguration, string connectionString = null)
-            where T : BackplaneDefinition, new()
-        {
-            busConfiguration.GetSettings().Set("NServiceBus.DataBackplane.ConnectionString", connectionString);
-            busConfiguration.GetSettings().Set<BackplaneDefinition>(new T());
-            busConfiguration.GetSettings().EnableFeatureByDefault(typeof (DataBackplane));
-        }
-    }
-
+    /// <summary>
+    /// Represents the data backplane feature. Should not be enabled directly. Instead use <see cref="DataBackplaneConfigExtensions.EnableDataBackplane{T}" />
+    /// </summary>
     public class DataBackplane : Feature
     {
         protected override void Setup(FeatureConfigurationContext context)

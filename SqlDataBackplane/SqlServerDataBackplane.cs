@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NServiceBus.Backplane.SqlServer
 {
-    public class SqlServerDataBackplane : IDataBackplane
+    class SqlServerDataBackplane : IDataBackplane
     {
         private readonly string owner;
         readonly string connectionString;

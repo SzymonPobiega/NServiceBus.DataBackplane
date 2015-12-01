@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NServiceBus.Backplane
 {
-    public class DataBackplaneClient : IDataBackplaneClient
+    class DataBackplaneClient : IDataBackplaneClient
     {
         private Dictionary<CacheKey, Entry> cache = new Dictionary<CacheKey, Entry>();
         private readonly IDataBackplane dataBackplane;

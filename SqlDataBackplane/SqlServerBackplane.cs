@@ -5,9 +5,9 @@ namespace NServiceBus
 {
     public class SqlServerBackplane : BackplaneDefinition
     {
-        public override IDataBackplane CreateBackplane(string ownerId, string connectionString)
+        public override IDataBackplane CreateBackplane(string nodeId, string connectionString)
         {
-            return new SqlServerDataBackplane(ownerId, connectionString);
+            return new SqlServerDataBackplane(nodeId, connectionString);
         }
     }
 }

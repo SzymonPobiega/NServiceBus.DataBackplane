@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace NServiceBus.Backplane
 {
-    public class DefaultQuerySchedule : IQuerySchedule
+    class DefaultQuerySchedule : IQuerySchedule
     {
         public IDisposable Schedule(Func<Task> recurringAction)
         {
