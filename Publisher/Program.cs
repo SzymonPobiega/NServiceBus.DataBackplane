@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Messages;
 using NServiceBus;
 using NServiceBus.Backplane;
+using NServiceBus.Backplane.FileSystem;
 
 namespace Publisher
 {
@@ -20,7 +21,8 @@ namespace Publisher
         {
             var busConfig = new BusConfiguration();
             busConfig.UsePersistence<InMemoryPersistence>();
-            busConfig.EnableDataBackplane<SqlServerBackplane>("Data Source=(local);Initial Catalog=Backplane2;Integrated Security=True");
+            //busConfig.EnableDataBackplane<SqlServerBackplane>("Data Source=(local);Initial Catalog=Backplane2;Integrated Security=True");
+            busConfig.EnableDataBackplane<FileSystemBackplane>();
             busConfig.Routing().EnableAutomaticRouting();
 
             var endoint = await Endpoint.Start(busConfig);

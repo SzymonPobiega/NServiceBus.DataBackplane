@@ -6,7 +6,7 @@ namespace NServiceBus.Backplane
 {
     public static class DataBackplaneConfigExtensions
     {
-        public static void EnableDataBackplane<T>(this BusConfiguration busConfiguration, string connectionString)
+        public static void EnableDataBackplane<T>(this BusConfiguration busConfiguration, string connectionString = null)
             where T : BackplaneDefinition, new()
         {
             busConfiguration.GetSettings().Set("NServiceBus.DataBackplane.ConnectionString", connectionString);

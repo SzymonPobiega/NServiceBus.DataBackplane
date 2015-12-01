@@ -56,19 +56,20 @@ namespace NServiceBus.Routing.Automatic
                             .Where(x => x != null)
                             .ToArray();
 
-                    await UdateCaches(context, endpointName, instanceName, types);
-                }, async e =>
+                    await UpdateCaches(context, endpointName, instanceName, types);
+                }, 
+                async e =>
                 {
                     var deserializedData = JsonConvert.DeserializeObject<HandledMessageDeclaration>(e.Data);
                     var endpointName = new EndpointName(deserializedData.EndpointName);
                     var instanceName = new EndpointInstanceName(endpointName, deserializedData.UserDiscriminator,
                         deserializedData.TransportDiscriminator);
 
-                    await UdateCaches(context, endpointName, instanceName, new Type[0]);
+                    await UpdateCaches(context, endpointName, instanceName, new Type[0]);
                 });
         }
 
-        private async Task UdateCaches(IBusContext context, EndpointName endpointName, EndpointInstanceName instanceName, Type[] types)
+        private async Task UpdateCaches(IBusContext context, EndpointName endpointName, EndpointInstanceName instanceName, Type[] types)
         {
             HashSet<Type> typesHandledByThisInstance;
             if (!typesByInstance.TryGetValue(instanceName, out typesHandledByThisInstance))

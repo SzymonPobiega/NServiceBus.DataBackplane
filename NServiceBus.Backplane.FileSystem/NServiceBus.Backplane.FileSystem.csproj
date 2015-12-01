@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5AE13D84-D79E-40AB-8DF8-F860EA7DB369}</ProjectGuid>
+    <ProjectGuid>{6A9978C6-E729-4041-8CC6-AE9F02F942E7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SqlDataBackplane.Tests</RootNamespace>
-    <AssemblyName>SqlDataBackplane.Tests</AssemblyName>
+    <RootNamespace>NServiceBus.Backplane.FileSystem</RootNamespace>
+    <AssemblyName>NServiceBus.Backplane.FileSystem</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,27 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBackplaneClientTests.cs" />
-    <Compile Include="FileSystemDataBackplaneTests.cs" />
-    <Compile Include="SqlServerDataBackplaneTests.cs" />
+    <Compile Include="FileSystemBackplane.cs" />
+    <Compile Include="FileSystemDataBackplane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NServiceBus.Backplane.FileSystem\NServiceBus.Backplane.FileSystem.csproj">
-      <Project>{6A9978C6-E729-4041-8CC6-AE9F02F942E7}</Project>
-      <Name>NServiceBus.Backplane.FileSystem</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NServiceBus.Backplane\NServiceBus.Backplane.csproj">
       <Project>{C820915E-0174-4F6C-8631-648487315476}</Project>
       <Name>NServiceBus.Backplane</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SqlDataBackplane\NServiceBus.Backplane.SqlServer.csproj">
-      <Project>{131552C2-0FA6-44DE-8EC7-C9749F0CF46C}</Project>
-      <Name>NServiceBus.Backplane.SqlServer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

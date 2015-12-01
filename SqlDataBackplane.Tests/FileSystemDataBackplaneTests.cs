@@ -1,21 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NServiceBus.Backplane.FileSystem;
 using NServiceBus.Backplane.SqlServer;
 using NUnit.Framework;
 
 namespace SqlDataBackplane.Tests
 {
     [TestFixture]
-    public class DataPackplaneTests
+    public class FileSystemDataBackplaneTests
     {
         [Test]
         public async Task Own_published_value_can_be_read_and_revoked()
         {
-            var backplane =
-                new SqlServerDataBackplane("A", @"Data Source=(local);Initial Catalog=Backplane1;Integrated Security=True");
+            var folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DataBackplane");
+            if (Directory.Exists(folder))
+            {
+                Directory.Delete(folder, true);
+            }
+            Directory.CreateDirectory(folder);
+
+            var backplane = new FileSystemDataBackplane("A", folder);
 
             var value = Guid.NewGuid().ToString();
             var type = Guid.NewGuid().ToString();

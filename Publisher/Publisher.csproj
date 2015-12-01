@@ -59,6 +59,10 @@
       <Project>{92BBEBBA-DFB2-4D01-A4B3-07B57FC09032}</Project>
       <Name>Messages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NServiceBus.Backplane.FileSystem\NServiceBus.Backplane.FileSystem.csproj">
+      <Project>{6A9978C6-E729-4041-8CC6-AE9F02F942E7}</Project>
+      <Name>NServiceBus.Backplane.FileSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NServiceBus.Backplane\NServiceBus.Backplane.csproj">
       <Project>{c820915e-0174-4f6c-8631-648487315476}</Project>
       <Name>NServiceBus.Backplane</Name>
