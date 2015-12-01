@@ -29,7 +29,7 @@ namespace SqlDataBackplane.Tests
                 return Task.FromResult(0);
             }, entry => Task.FromResult(0));
             CollectionAssert.AreEqual(new [] {"B", "C"}, readValues);
-            subscription.Dispose();
+            subscription.Unsubscribe();
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace SqlDataBackplane.Tests
             await otherBackplane.Publish("T1", "B");
             await fakeSchedule.TriggerQuery();
             CollectionAssert.Contains(readValues, "B");
-            subscription.Dispose();
+            subscription.Unsubscribe();
 
             await otherBackplane.Publish("T1", "C");
             await fakeSchedule.TriggerQuery();
@@ -87,7 +87,7 @@ namespace SqlDataBackplane.Tests
             await otherBackplane.Revoke("T1");
             await fakeSchedule.TriggerQuery();
             CollectionAssert.DoesNotContain(readValues, "B");
-            subscription.Dispose();
+            subscription.Unsubscribe();
         }
 
         private class FakeSchedule : IQuerySchedule

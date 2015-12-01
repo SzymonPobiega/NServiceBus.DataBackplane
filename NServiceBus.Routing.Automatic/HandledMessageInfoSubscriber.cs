@@ -12,15 +12,15 @@ namespace NServiceBus.Routing.Automatic
 {
     public class HandledMessageInfoSubscriber : FeatureStartupTask
     {
-        private readonly DataBackplaneClient dataBackplane;
+        private readonly IDataBackplaneClient dataBackplane;
         private readonly ReadOnlySettings settings;
-        private IDisposable subscription;
+        private IDataBackplaneSubscription subscription;
         private Dictionary<Type, HashSet<EndpointName>> endpointMap = new Dictionary<Type, HashSet<EndpointName>>();
         private Dictionary<EndpointName, HashSet<EndpointInstanceName>> instanceMap = new Dictionary<EndpointName, HashSet<EndpointInstanceName>>();
         private Dictionary<Type, HashSet<EndpointInstanceName>> publisherMap = new Dictionary<Type, HashSet<EndpointInstanceName>>();
         private readonly Dictionary<EndpointInstanceName, HashSet<Type>> typesByInstance = new Dictionary<EndpointInstanceName, HashSet<Type>>();
 
-        public HandledMessageInfoSubscriber(DataBackplaneClient dataBackplane, ReadOnlySettings settings)
+        public HandledMessageInfoSubscriber(IDataBackplaneClient dataBackplane, ReadOnlySettings settings)
         {
             this.dataBackplane = dataBackplane;
             this.settings = settings;
@@ -191,7 +191,7 @@ namespace NServiceBus.Routing.Automatic
 
         protected override Task OnStop(IBusContext context)
         {
-            subscription.Dispose();
+            subscription.Unsubscribe();
             return Task.FromResult(0);
         }
     }

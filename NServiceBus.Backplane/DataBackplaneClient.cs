@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NServiceBus.Backplane
 {
-    public class DataBackplaneClient
+    public class DataBackplaneClient : IDataBackplaneClient
     {
         private Dictionary<CacheKey, Entry> cache = new Dictionary<CacheKey, Entry>();
         private readonly IDataBackplane dataBackplane;
@@ -82,7 +82,7 @@ namespace NServiceBus.Backplane
             return dataBackplane.Revoke(type);
         }
 
-        public async Task<IDisposable> GetAllAndSubscribeToChanges(string type, Func<Entry, Task> onChanged, Func<Entry, Task> onRemoved)
+        public async Task<IDataBackplaneSubscription> GetAllAndSubscribeToChanges(string type, Func<Entry, Task> onChanged, Func<Entry, Task> onRemoved)
         {
             var subscriberId = Guid.NewGuid();
             var subscriber = new Subscriber(type, onChanged, onRemoved, () =>
@@ -99,12 +99,13 @@ namespace NServiceBus.Backplane
             return subscriber;
         }
 
-        private class Subscriber : IDisposable
+        private class Subscriber : IDataBackplaneSubscription
         {
             private readonly Func<Entry, Task> onAddedOrUpdated;
             private readonly Func<Entry, Task> onRemoved;
             private readonly Action unsubscribe;
             private readonly string type;
+            private bool unsubscribed;
 
             public Subscriber(string type, Func<Entry, Task> onAddedOrUpdated, Func<Entry, Task> onRemoved, Action unsubscribe)
             {
@@ -132,9 +133,14 @@ namespace NServiceBus.Backplane
                 return Task.FromResult(0);
             }
 
-            public void Dispose()
+            public void Unsubscribe()
             {
+                if (unsubscribed)
+                {
+                    return;
+                }
                 unsubscribe();
+                unsubscribed = true;
             }
         }
         

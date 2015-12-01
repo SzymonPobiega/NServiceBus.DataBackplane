@@ -50,6 +50,7 @@
     <Compile Include="DefaultQuerySchedule.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="IDataBackplane.cs" />
+    <Compile Include="IDataBackplaneClient.cs" />
     <Compile Include="IQuerySchedule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

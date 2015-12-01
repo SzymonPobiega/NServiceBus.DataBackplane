@@ -11,12 +11,12 @@ namespace NServiceBus.Routing.Automatic
 {
     public class HandledMessageInfoPublisher : FeatureStartupTask
     {
-        private readonly DataBackplaneClient dataBackplane;
+        private readonly IDataBackplaneClient dataBackplane;
         private readonly IReadOnlyCollection<Type> hanledMessageTypes;
         private readonly ReadOnlySettings settings;
 
         public HandledMessageInfoPublisher(
-            DataBackplaneClient dataBackplane, 
+            IDataBackplaneClient dataBackplane, 
             IReadOnlyCollection<Type> hanledMessageTypes,
             ReadOnlySettings settings)
         {
