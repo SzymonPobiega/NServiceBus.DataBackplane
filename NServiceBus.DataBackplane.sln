@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Backplane", "NS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Backplane.FileSystem", "NServiceBus.Backplane.FileSystem\NServiceBus.Backplane.FileSystem.csproj", "{6A9978C6-E729-4041-8CC6-AE9F02F942E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Backplane.Consul", "NServiceBus.Backplane.Consul\NServiceBus.Backplane.Consul.csproj", "{D8A72104-67D9-46F1-BD32-A0C13838DC24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{6A9978C6-E729-4041-8CC6-AE9F02F942E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A9978C6-E729-4041-8CC6-AE9F02F942E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A9978C6-E729-4041-8CC6-AE9F02F942E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
