@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D60A6ECA-D564-4A8B-AA9E-C3F6921C07A8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{D8A72104-67D9-46F1-BD32-A0C13838DC24}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sender</RootNamespace>
-    <AssemblyName>Sender</AssemblyName>
+    <RootNamespace>NServiceBus.Backplane.Consul</RootNamespace>
+    <AssemblyName>NServiceBus.Backplane.Consul</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,8 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NServiceBus.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NServiceBus.6.0.0-unstable1174\lib\net452\NServiceBus.Core.dll</HintPath>
+    <Reference Include="Consul, Version=0.5.2.67, Culture=neutral, PublicKeyToken=20a6ad9a81df1d95, processorArchitecture=MSIL">
+      <HintPath>..\packages\Consul.0.5.2.67\lib\net45\Consul.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -47,38 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ConsulBackplane.cs" />
+    <Compile Include="ConsulServerDataBackplane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Messages\Messages.csproj">
-      <Project>{92BBEBBA-DFB2-4D01-A4B3-07B57FC09032}</Project>
-      <Name>Messages</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NServiceBus.Backplane.Consul\NServiceBus.Backplane.Consul.csproj">
-      <Project>{d8a72104-67d9-46f1-bd32-a0c13838dc24}</Project>
-      <Name>NServiceBus.Backplane.Consul</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NServiceBus.Backplane.FileSystem\NServiceBus.Backplane.FileSystem.csproj">
-      <Project>{6A9978C6-E729-4041-8CC6-AE9F02F942E7}</Project>
-      <Name>NServiceBus.Backplane.FileSystem</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NServiceBus.Backplane\NServiceBus.Backplane.csproj">
-      <Project>{c820915e-0174-4f6c-8631-648487315476}</Project>
+      <Project>{C820915E-0174-4F6C-8631-648487315476}</Project>
       <Name>NServiceBus.Backplane</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NServiceBus.Routing.Automatic\NServiceBus.Routing.Automatic.csproj">
-      <Project>{e42381c4-a20f-4c57-98c2-7035793a993d}</Project>
-      <Name>NServiceBus.Routing.Automatic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SqlDataBackplane\NServiceBus.Backplane.SqlServer.csproj">
-      <Project>{131552C2-0FA6-44DE-8EC7-C9749F0CF46C}</Project>
-      <Name>NServiceBus.Backplane.SqlServer</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

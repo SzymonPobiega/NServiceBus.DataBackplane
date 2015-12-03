@@ -22,7 +22,8 @@ namespace Publisher
             var busConfig = new BusConfiguration();
             busConfig.UsePersistence<InMemoryPersistence>();
             //busConfig.EnableDataBackplane<SqlServerBackplane>("Data Source=(local);Initial Catalog=Backplane2;Integrated Security=True");
-            busConfig.EnableDataBackplane<FileSystemBackplane>();
+            //busConfig.EnableDataBackplane<FileSystemBackplane>();
+            busConfig.EnableDataBackplane<ConsulBackplane>("http://127.0.0.1:8500");
             busConfig.Routing().EnableAutomaticRouting();
 
             var endoint = await Endpoint.Start(busConfig);
