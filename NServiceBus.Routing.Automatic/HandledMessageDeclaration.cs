@@ -1,4 +1,6 @@
-﻿namespace NServiceBus.Routing.Automatic
+﻿using System;
+
+namespace NServiceBus.Routing.Automatic
 {
     public class HandledMessageDeclaration
     {
@@ -9,5 +11,9 @@
         public string TransportDiscriminator { get; set; }
 
         public string[] HandledMessageTypes { get; set; }
+
+        public bool Active { get; set; }
+
+        public DateTime Timestamp { get; set; }
     }
 }

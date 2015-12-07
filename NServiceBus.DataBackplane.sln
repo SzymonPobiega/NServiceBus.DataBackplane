@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Backplane.FileS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Backplane.Consul", "NServiceBus.Backplane.Consul\NServiceBus.Backplane.Consul.csproj", "{D8A72104-67D9-46F1-BD32-A0C13838DC24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publisher2", "Publisher2\Publisher2.csproj", "{1FB7DE00-6387-4720-8550-DF16BCFD4084}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8A72104-67D9-46F1-BD32-A0C13838DC24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FB7DE00-6387-4720-8550-DF16BCFD4084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FB7DE00-6387-4720-8550-DF16BCFD4084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FB7DE00-6387-4720-8550-DF16BCFD4084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FB7DE00-6387-4720-8550-DF16BCFD4084}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,5 +79,6 @@ Global
 		{D60A6ECA-D564-4A8B-AA9E-C3F6921C07A8} = {BF22D52B-1EBE-415D-90C9-E1557DB488C0}
 		{92BBEBBA-DFB2-4D01-A4B3-07B57FC09032} = {BF22D52B-1EBE-415D-90C9-E1557DB488C0}
 		{F208B40A-CBBB-4C70-BA31-43240AB981C8} = {BF22D52B-1EBE-415D-90C9-E1557DB488C0}
+		{1FB7DE00-6387-4720-8550-DF16BCFD4084} = {BF22D52B-1EBE-415D-90C9-E1557DB488C0}
 	EndGlobalSection
 EndGlobal

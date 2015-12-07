@@ -45,11 +45,24 @@ namespace NServiceBus.Backplane.FileSystem
             var allFiles = Directory.GetFiles(folder);
 
             IReadOnlyCollection<Entry> result = allFiles
-                .Select(File.ReadAllBytes)
+                .Select(s => TryReadContent(s))
+                .Where(c => c != null)
                 .Select(FileContent.Decode)
                 .ToArray();
 
             return Task.FromResult(result);
+        }
+
+        private static byte[] TryReadContent(string s)
+        {
+            try
+            {
+                return File.ReadAllBytes(s);
+            }
+            catch (IOException)
+            {
+                return null;
+            }
         }
 
         public Task Revoke(string type)

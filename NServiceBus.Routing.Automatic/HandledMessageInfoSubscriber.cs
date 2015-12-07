@@ -1,49 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NServiceBus.Backplane;
 using NServiceBus.Features;
+using NServiceBus.Logging;
 using NServiceBus.Routing.MessageDrivenSubscriptions;
 using NServiceBus.Settings;
 
 namespace NServiceBus.Routing.Automatic
 {
+
+    /*
+    * Deactivation logic:
+    * - if an endpoint shuts down properly, it updates the entry as inactive. Other endpoints deactivate rout
+    * - if an ednpoint is killed, it does not deactivate its entry. Other endpoints monitor the update time of the entry and deactivate it when it times out
+    * - if an endpoint is decomissioned, a correposponding entry should be delted.
+    */
+
     public class HandledMessageInfoSubscriber : FeatureStartupTask
     {
+        private static readonly ILog Logger = LogManager.GetLogger<HandledMessageInfoSubscriber>();
+
         private readonly IDataBackplaneClient dataBackplane;
         private readonly ReadOnlySettings settings;
+        private readonly TimeSpan sweepPeriod;
+        private readonly TimeSpan heartbeatTimeout;
         private IDataBackplaneSubscription subscription;
         private Dictionary<Type, HashSet<EndpointName>> endpointMap = new Dictionary<Type, HashSet<EndpointName>>();
         private Dictionary<EndpointName, HashSet<EndpointInstanceName>> instanceMap = new Dictionary<EndpointName, HashSet<EndpointInstanceName>>();
-        private Dictionary<Type, HashSet<EndpointInstanceName>> publisherMap = new Dictionary<Type, HashSet<EndpointInstanceName>>();
-        private readonly Dictionary<EndpointInstanceName, HashSet<Type>> typesByInstance = new Dictionary<EndpointInstanceName, HashSet<Type>>();
+        private Dictionary<EndpointInstanceName, EndpointInstanceInfo> instanceInformation = new Dictionary<EndpointInstanceName, EndpointInstanceInfo>();
+        private Timer sweepTimer;
 
-        public HandledMessageInfoSubscriber(IDataBackplaneClient dataBackplane, ReadOnlySettings settings)
+        public HandledMessageInfoSubscriber(IDataBackplaneClient dataBackplane, ReadOnlySettings settings, TimeSpan sweepPeriod, TimeSpan heartbeatTimeout)
         {
             this.dataBackplane = dataBackplane;
             this.settings = settings;
+            this.sweepPeriod = sweepPeriod;
+            this.heartbeatTimeout = heartbeatTimeout;
         }
 
         protected override async Task OnStart(IBusContext context)
         {
             var routingTable = settings.Get<UnicastRoutingTable>();
             var endpointInstances = settings.Get<EndpointInstances>();
-            var publishers = settings.Get<Publishers>();
 
             routingTable.AddDynamic((list, bag) => FindDestination(list));
             endpointInstances.AddDynamic(FindInstances);
-            publishers.AddDynamic(type =>
-            {
-                HashSet<EndpointInstanceName> typeEntry;
-                if (publisherMap.TryGetValue(type, out typeEntry) && typeEntry.Any())
-                {
-                    return new PublisherAddress(typeEntry.First().EndpointName);
-                }
-                return null;
-            });
-
+           
             subscription = await dataBackplane.GetAllAndSubscribeToChanges("NServiceBus.HandledMessages",
                 async e =>
                 {
@@ -56,71 +62,57 @@ namespace NServiceBus.Routing.Automatic
                             .Where(x => x != null)
                             .ToArray();
 
-                    await UpdateCaches(context, endpointName, instanceName, types);
+                    EndpointInstanceInfo instanceInfo;
+                    if (!instanceInformation.TryGetValue(instanceName, out instanceInfo))
+                    {
+                        var newInstanceInformation = new Dictionary<EndpointInstanceName, EndpointInstanceInfo>(instanceInformation);
+                        instanceInfo = new EndpointInstanceInfo();
+                        newInstanceInformation[instanceName] = instanceInfo;
+                        instanceInformation = newInstanceInformation;
+                    }
+                    if (deserializedData.Active)
+                    {
+                        instanceInfo.Activate(deserializedData.Timestamp);
+                        Logger.InfoFormat("Instance {0} active (heartbeat).", instanceName);
+                    }
+                    else
+                    {
+                        instanceInfo.Deactivate();
+                        Logger.InfoFormat("Instance {0} deactivated.", instanceName);
+                    }
+                    await UpdateCaches(endpointName, instanceName, types);
                 }, 
                 async e =>
                 {
+
                     var deserializedData = JsonConvert.DeserializeObject<HandledMessageDeclaration>(e.Data);
                     var endpointName = new EndpointName(deserializedData.EndpointName);
                     var instanceName = new EndpointInstanceName(endpointName, deserializedData.UserDiscriminator,
                         deserializedData.TransportDiscriminator);
 
-                    await UpdateCaches(context, endpointName, instanceName, new Type[0]);
+                    Logger.InfoFormat("Instance {0} removed from routing tables.", instanceName);
+
+                    await UpdateCaches(endpointName, instanceName, new Type[0]);
+
+                    instanceInformation.Remove(instanceName);
                 });
+            sweepTimer = new Timer(state =>
+            {
+                foreach (var info in instanceInformation)
+                {
+                    if (!info.Value.Sweep(DateTime.UtcNow, heartbeatTimeout))
+                    {
+                        Logger.InfoFormat("Instance {0} deactivated (heartbeat timeout).", info.Key);
+                    }
+                }
+            }, null, sweepPeriod, sweepPeriod);
         }
 
-        private async Task UpdateCaches(IBusContext context, EndpointName endpointName, EndpointInstanceName instanceName, Type[] types)
+        private Task UpdateCaches(EndpointName endpointName, EndpointInstanceName instanceName, Type[] types)
         {
-            HashSet<Type> typesHandledByThisInstance;
-            if (!typesByInstance.TryGetValue(instanceName, out typesHandledByThisInstance))
-            {
-                typesHandledByThisInstance = new HashSet<Type>();
-                typesByInstance[instanceName] = typesHandledByThisInstance;
-            }
-
-            var addedTypes = types.Except(typesHandledByThisInstance).ToArray();
-            var removedTypes = typesHandledByThisInstance.Except(types).ToArray();
-
-            foreach (var type in types)
-            {
-                typesHandledByThisInstance.Add(type);
-            }
-
-            foreach (var removedType in removedTypes.Where(t => settings.Get<Conventions>().IsEventType(t)))
-            {
-                await context.Unsubscribe(removedType).ConfigureAwait(false);
-            }
-
             instanceMap = BuildNewInstanceMap(endpointName, instanceName);
             endpointMap = BuildNewEndpointMap(endpointName, types);
-            publisherMap = BuildNewPublisherMap(instanceName, types);
-
-            foreach (var addedType in addedTypes.Where(t => settings.Get<Conventions>().IsEventType(t)))
-            {
-                await context.Subscribe(addedType).ConfigureAwait(false);
-            }
-        }
-
-        private Dictionary<Type, HashSet<EndpointInstanceName>> BuildNewPublisherMap(EndpointInstanceName instanceName, Type[] types)
-        {
-            var newPublisherMap = new Dictionary<Type, HashSet<EndpointInstanceName>>();
-            foreach (var pair in publisherMap)
-            {
-                var otherInstances = pair.Value.Where(x => x != instanceName);
-                newPublisherMap[pair.Key] = new HashSet<EndpointInstanceName>(otherInstances);
-            }
-
-            foreach (var type in types)
-            {
-                HashSet<EndpointInstanceName> typeEntry;
-                if (!newPublisherMap.TryGetValue(type, out typeEntry))
-                {
-                    typeEntry = new HashSet<EndpointInstanceName>();
-                    newPublisherMap[type] = typeEntry;
-                }
-                typeEntry.Add(instanceName);
-            }
-            return newPublisherMap;
+            return Task.FromResult(0);
         }
 
         private Dictionary<EndpointName, HashSet<EndpointInstanceName>> BuildNewInstanceMap(EndpointName endpointName, EndpointInstanceName instanceName)
@@ -168,11 +160,16 @@ namespace NServiceBus.Routing.Automatic
             HashSet<EndpointInstanceName> instances;
             if (instanceMap.TryGetValue(endpointName, out instances))
             {
-                foreach (var instance in instances)
+                var activeInstances =
+                    instances.Where(i => instanceInformation[i].State == InstanceState.Active).ToArray();
+                if (activeInstances.Any())
                 {
-                    yield return instance;
+                    return activeInstances;
                 }
+                Logger.InfoFormat("No active instances of endpoint {0} detected. Trying to route to the inactive ones.", endpointName);
+                return instances;
             }
+            return Enumerable.Empty<EndpointInstanceName>();
         }
 
         private IEnumerable<IUnicastRoute> FindDestination(List<Type> enclosedMessageTypes)
@@ -192,6 +189,14 @@ namespace NServiceBus.Routing.Automatic
 
         protected override Task OnStop(IBusContext context)
         {
+            using (var waitHandle = new ManualResetEvent(false))
+            {
+                sweepTimer.Dispose(waitHandle);
+
+                // TODO: Use async synchronization primitive
+                waitHandle.WaitOne();
+            }
+
             subscription.Unsubscribe();
             return Task.FromResult(0);
         }

@@ -8,7 +8,7 @@ using NServiceBus;
 using NServiceBus.Backplane;
 using NServiceBus.Backplane.FileSystem;
 
-namespace Publisher
+namespace Publisher2
 {
     class Program
     {
@@ -21,7 +21,7 @@ namespace Publisher
         {
             var busConfig = new BusConfiguration();
             busConfig.EndpointName("Publisher");
-            busConfig.ScaleOut().UniqueQueuePerEndpointInstance("1");
+            busConfig.ScaleOut().UniqueQueuePerEndpointInstance("2");
             busConfig.UsePersistence<InMemoryPersistence>();
             busConfig.EnableDataBackplane<FileSystemBackplane>();
             //busConfig.EnableDataBackplane<SqlServerBackplane>("Data Source=(local);Initial Catalog=Backplane2;Integrated Security=True");
@@ -50,7 +50,7 @@ namespace Publisher
     {
         public Task Handle(SomeCommand message, IMessageHandlerContext context)
         {
-            Console.WriteLine("1: Got command");
+            Console.WriteLine("2: Got command");
             return Task.FromResult(0);
         }
     }

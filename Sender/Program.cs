@@ -21,20 +21,26 @@ namespace Sender
         {
             var busConfig = new BusConfiguration();
             busConfig.UsePersistence<InMemoryPersistence>();
+            busConfig.EnableDataBackplane<FileSystemBackplane>();
             //busConfig.EnableDataBackplane<SqlServerBackplane>("Data Source=(local);Initial Catalog=Backplane1;Integrated Security=True");
-            //busConfig.EnableDataBackplane<FileSystemBackplane>();
-            busConfig.EnableDataBackplane<ConsulBackplane>("http://127.0.0.1:8500");
+            //busConfig.EnableDataBackplane<ConsulBackplane>("http://127.0.0.1:8500");
             busConfig.Routing().EnableAutomaticRouting();
 
-            var endoint = await Endpoint.Start(busConfig);
+            var endpoint = await Endpoint.Start(busConfig);
 
             Console.WriteLine("Press <enter> to send a command.");
 
             while (true)
             {
-                Console.ReadLine();
-                await endoint.CreateBusContext().Send(new SomeCommand());
+                var line = Console.ReadLine();
+                if (line == "X")
+                {
+                    break;
+                }
+                await endpoint.CreateBusContext().Send(new SomeCommand());
             }
+
+            await endpoint.Stop();
         }
     }
 
